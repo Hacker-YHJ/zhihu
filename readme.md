@@ -1,8 +1,7 @@
 # 知乎数据 API 接口 (node.js)
 
-[![](https://nodei.co/npm/zhihu.png?downloads=true)](https://nodei.co/npm/zhihu-plus/)
-
-[![](https://travis-ci.org/iplus26/zhihu.svg)](https://travis-ci.org/iplus26/zhihu/builds)
+[![NPM](https://nodei.co/npm/zhihu-plus.png)](https://nodei.co/npm/zhihu-plus/)
+[![Build Status](https://travis-ci.org/Hacker-YHJ/zhihu.svg?branch=master)](https://travis-ci.org/Hacker-YHJ/zhihu)
 
 根据这些接口获取到知乎的数据，包括以下接口：
 
