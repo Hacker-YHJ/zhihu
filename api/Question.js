@@ -1,11 +1,11 @@
 const { request, cheerio } = require('../config/commonModules');
 
-const answers = (rawParams) => {
+const answers = (rawParams, offset) => {
   let params = rawParams;
   if (typeof rawParams === 'string') {
     params = {
-      token: arguments[0],
-      offset: arguments[1] || 0,
+      token: rawParams,
+      offset: offset || 0,
       // pagesize: arguments[2] || 10,
     };
   }

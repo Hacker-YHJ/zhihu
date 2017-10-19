@@ -10,6 +10,5 @@ describe('Question', () => {
     offset: 0,
     // pagesize: 5
   }).should.eventually.be.not.empty);
-
   it('should return question object, from 0 - 9 by default', () => Question.answers('19557271').should.eventually.be.not.empty);
 });
