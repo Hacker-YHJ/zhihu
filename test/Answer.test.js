@@ -1,21 +1,16 @@
-/*
- * @author	Ivan Jiang
- * @date	23 May 2016
- */
+/* eslint-disable no-unused-expressions */
 
-'use strict';
+const { Answer } = require('../index');
+const chai = require('chai');
 
-let Answer = require('../index').Answer;
-let should = require('should');
+chai.should();
+chai.use(require('chai-as-promised'));
 
-describe('Answer', function () {
-  describe('Voters', function () {
-    it('should return voters of the answer', function (done) {
-      let answerId = '35369006';
-      Answer.voters(answerId).then(function (data) {
-        data.length.should.above(0);
-        done();
-      });
+describe('Answer', () => {
+  describe('Voters', () => {
+    it('should return voters of the answer', () => {
+      const answerId = '35369006';
+      Answer.voters(answerId).should.eventually.not.be.empty;
     });
   });
 });

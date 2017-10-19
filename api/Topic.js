@@ -1,38 +1,30 @@
-/**
- * 话题相关
- */
+const { request, cheerio } = require('../config/commonModules');
 
-'use strict';
+const API = require('../config/api');
 
-const {request, cheerio} = require('../config/commonModules');
-
-let API = require('../config/api');
-
-let getTopicByID = (topicID, page = 1) => {
-  let data = {
-    url: API.topic_url + topicID + '/questions',
+const getTopicByID = (topicID, page = 1) => {
+  const data = {
+    url: `${API.topic_url + topicID}/questions`,
     qs: {
-      page
+      page,
     },
   };
 
   return request(data).then((content) => {
-    let responseBody = content.body;
-    let $ = cheerio.load(responseBody);
-    let result = {
+    const responseBody = content.body;
+    const $ = cheerio.load(responseBody);
+    const result = {
       name: $('.topic-info .topic-name h1').text(),
     };
 
-    let questions = {};
-    let index = 0;
+    const questions = {};
 
-    $('div.feed-item.feed-item-hook.question-item').each(function () {
-      questions[index] = {};
-      questions[index].title = $('a.question_link', this).text();
-      questions[index].url = API.zhihu +
+    $('div.feed-item.feed-item-hook.question-item').each((i) => {
+      questions[i] = {};
+      questions[i].title = $('a.question_link', this).text();
+      questions[i].url = API.zhihu +
         $('a.question_link', this).attr('href');
-      questions[index].postTime = $('span.time', this).text();
-      index = index + 1;
+      questions[i].postTime = $('span.time', this).text();
     });
 
     result.page = page;
@@ -42,35 +34,33 @@ let getTopicByID = (topicID, page = 1) => {
   });
 };
 
-let getTopicTopAnswersByID = (topicID, page = 1) => {
-  let data = {
-    url: API.topic_url + topicID + '/top-answers',
+const getTopicTopAnswersByID = (topicID, page = 1) => {
+  const data = {
+    url: `${API.topic_url + topicID}/top-answers`,
     qs: {
-      page
-    }
+      page,
+    },
   };
   return request(data).then((content) => {
-    let responseBody = content.body;
-    let $ = cheerio.load(responseBody);
-    let result = {
+    const responseBody = content.body;
+    const $ = cheerio.load(responseBody);
+    const result = {
       name: $('.topic-info .topic-name h1').text(),
     };
 
-    let questions = {};
-    let index = 0;
+    const questions = {};
 
-    $('div.feed-item.feed-item-hook.folding').each(function () {
-      questions[index] = {};
-      questions[index].title = $('a.question_link', this).text();
-      questions[index].url = API.zhihu + $('a.question_link', this).attr('href');
-      questions[index].upvotes = $('a.zm-item-vote-count', this).text();
-      questions[index].comment_count = $('a.toggle-comment', this).last().text().match(/\d+/g)[0];
-      questions[index].answer_url = API.zhihu + $('a.toggle-expand', this).attr('href');
-      questions[index].user = {};
-      questions[index].user.name = $('h3.zm-item-answer-author-wrap a', this).text();
-      questions[index].user.url = API.zhihu
+    $('div.feed-item.feed-item-hook.folding').each((i) => {
+      questions[i] = {};
+      questions[i].title = $('a.question_link', this).text();
+      questions[i].url = API.zhihu + $('a.question_link', this).attr('href');
+      questions[i].upvotes = $('a.zm-item-vote-count', this).text();
+      [questions[i].comment_count] = $('a.toggle-comment', this).last().text().match(/\d+/g);
+      questions[i].answer_url = API.zhihu + $('a.toggle-expand', this).attr('href');
+      questions[i].user = {};
+      questions[i].user.name = $('h3.zm-item-answer-author-wrap a', this).text();
+      questions[i].user.url = API.zhihu
         + $('h3.zm-item-answer-author-wrap a', this).attr('href');
-      index++;
     });
 
     result.page = page;
@@ -82,5 +72,5 @@ let getTopicTopAnswersByID = (topicID, page = 1) => {
 
 module.exports = {
   getTopicByID,
-  getTopicTopAnswersByID
+  getTopicTopAnswersByID,
 };

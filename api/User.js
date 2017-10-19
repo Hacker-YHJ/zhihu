@@ -1,69 +1,59 @@
-/**
- * Copyright (c) 2014 Meizu bigertech, All rights reserved.
- * http://www.bigertech.com/
- * @author liuxing
- * @date  14-11-10
- * @description
- *
- */
-'use strict';
-const {request, cheerio} = require('../config/commonModules');
-
+const { request, cheerio } = require('../config/commonModules');
 const config = require('../config');
 const API = require('../config/api');
 
 
 function formatFollowData(str) {
   if (str.indexOf('K') !== -1) {
-    return parseInt(str) * 1000;
+    return parseInt(str, 10) * 1000;
   }
   // if (str.indexOf('K') !== -1) {
   //   return parseInt(str) * 10000;
   // }
-  return parseInt(str);
+  return parseInt(str, 10);
 }
 
 /*
  * @param name  The name of Zhihu user
  * @return      A promise
  */
-let info = (name) => {
-  let data = {
+const info = (name) => {
+  const data = {
     url: API.user.info,
     qs: {
       params: JSON.stringify({
-        'url_token': name
+        url_token: name,
       }),
     },
   };
 
-  return request(data).then(function (content) {
-    let responseBody = content.body;
-    let $ = cheerio.load(responseBody);
-    let values = $('span.value');
-    let result = {
+  return request(data).then((content) => {
+    const responseBody = content.body;
+    const $ = cheerio.load(responseBody);
+    const values = $('span.value');
+    const result = {
       answer: formatFollowData(values.eq(0).text()),
       post: formatFollowData(values.eq(1).text()),
       follower: formatFollowData(values.eq(2).text()),
     };
     result.profileUrl = config.zhihu + $('a.avatar-link').attr('href');
     result.name = $('span.name').text();
-    let male = $('.icon-profile-female');
+    const male = $('.icon-profile-female');
     result.sex = male.length === 1 ? 'female' : 'male';
     return result;
   });
 };
 
-let questions = (qID) => {
+const questions = () => {
 };
 
-let answers = (qID) => {
+const answers = () => {
 };
 
-let zhuanlansFocus = () => {
+const zhuanlansFocus = () => {
 };
 
-let topic = () => {
+const topic = () => {
 };
 
 module.exports = {

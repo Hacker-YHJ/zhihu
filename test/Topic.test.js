@@ -1,23 +1,19 @@
-'use strict';
+/* eslint-disable no-unused-expressions */
+const { Topic } = require('../');
+const chai = require('chai');
 
-let Topic = require('../').Topic;
-let should = require('should');
+chai.should();
+chai.use(require('chai-as-promised'));
 
-describe('Topic', function () {
-  describe('#info', function () {
-    it('should return topic info object', function (done) {
-      let topicID = '19550461';
+describe('Topic', () => {
+  describe('#info', () => {
+    it('should return topic info object', () => {
+      const topicID = '19550461';
 
       // http://www.zhihu.com/topic/19550461/questions
       // if page? http://www.zhihu.com/topic/19550461/questions?page=2
 
-      Topic.getTopicTopAnswersByID(topicID).then(function (data) {
-        Object.keys(data).length.should.above(0);
-        done();
-      }).catch(function (err) {
-        console.error(err);
-      });
+      Topic.getTopicTopAnswersByID(topicID).should.eventually.be.not.empty;
     });
   });
 });
-

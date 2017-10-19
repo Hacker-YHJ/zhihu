@@ -1,8 +1,9 @@
 {
-  "name": "zhihu",
-  "version": "1.4.1",
-  "author": "kissliux <shanelau1021@gmail.com>",
+  "name": "zhihu-plus",
+  "version": "1.4.2",
+  "author": "Thomas Yang <jscnm1993@gmail.com>",
   "contributors": [
+    "kissliux <shanelau1021@gmail.com>",
     "Ivan Jiang <iplus26@gmail.com>",
     "王祎 <451114984@qq.com>",
     "sunchenguang <809200299@qq.com>"
@@ -10,31 +11,41 @@
   "description": "Zhihu API, 获取知乎平台信息数据的接口",
   "main": "index.js",
   "engines": {
-    "node": " >0.10.x"
+    "node": " >6.4.0"
   },
   "dependencies": {
     "async": "^1.5.2",
-    "bluebird": "^3.4.0",
+    "bluebird": "^3.5.1",
     "cheerio": "^0.17.0",
-    "lodash": "^4.13.1",
-    "request": "^2.72.0",
+    "lodash": "^4.17.4",
+    "request": "^2.83.0",
     "request-promise": "^3.0.0"
   },
   "devDependencies": {
-    "should": "^4.3.0",
-    "mocha": "*"
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-things": "^0.2.0",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-mocha": "^4.11.0",
+    "eslint-plugin-react": "^7.4.0",
+    "mocha": "^4.0.1"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --timeout 15000"
+    "test": "npm run eslint && ./node_modules/mocha/bin/mocha --timeout 15000",
+    "eslint": "./node_modules/eslint/bin/eslint.js ./api/*.js ./config/*.js ./test/*.js",
+    "mocha": "./node_modules/mocha/bin/mocha --timeout 15000"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shanelau/zhihu.git"
+    "url": "git+https://github.com/Hacker-YHJ/zhihu.git"
   },
   "bugs": {
-    "url": "https://github.com/shanelau/zhihu/issues"
+    "url": "https://github.com/Hacker-YHJ/zhihu/issues"
   },
-  "homepage": "https://github.com/shanelau/zhihu#readme",
+  "homepage": "https://github.com/Hacker-YHJ/zhihu#readme",
   "directories": {
     "test": "test"
   },

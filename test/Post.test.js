@@ -1,51 +1,28 @@
-/**
- * Copyright (c) 2014 Meizu bigertech, All rights reserved.
- * http://www.bigertech.com/
- * @author liuxing
- * @date  14-11-10
- * @description
- *
- */
-let Post = require('../').Post;
-let should = require('should');
+/* eslint-disable no-unused-expressions */
+const { Post } = require('../');
+const chai = require('chai');
 
-describe('Post', function () {
-  describe('#info', function () {
-    it('should return post info object', function (done) {
-      let postUrl = 'https://zhuanlan.zhihu.com/p/19888522';
-      Post.info(postUrl).then(function (data) {
-        Object.keys(data).length.should.above(0);
-        done();
-      }).catch(function (err) {
-        console.error(err);
-      });
+chai.should();
+chai.use(require('chai-as-promised'));
 
+describe('Post', () => {
+  describe('#info', () => {
+    it('should return post info object', () => {
+      const postUrl = 'https://zhuanlan.zhihu.com/p/19888522';
+      Post.info(postUrl).should.eventually.be.not.empty;
     });
   });
 
-  describe('#zhuanlan', function () {
-    it('should return zhuanlan info object', function (done) {
-      let name = 'bigertech';
-      Post.zhuanlanInfo(name).then(function (data) {
-        Object.keys(data).length.should.above(0);
-        done();
-      }).catch(function (err) {
-        console.error(err);
-      });
-
+  describe('#zhuanlan', () => {
+    it('should return zhuanlan info object', () => {
+      const name = 'bigertech';
+      Post.zhuanlanInfo(name).should.eventually.be.not.empty;
     });
   });
-  describe('#comments', function () {
-    it('should return zhuanlan article comments array', function (done) {
-      let postUrl = 'https://zhuanlan.zhihu.com/p/19888522';
-      Post.comments(postUrl).then(function (data) {
-        data.length.should.above(0);
-        done();
-      }).catch(function (err) {
-        console.error(err);
-      });
-
+  describe('#comments', () => {
+    it('should return zhuanlan article comments array', () => {
+      const postUrl = 'https://zhuanlan.zhihu.com/p/19888522';
+      Post.comments(postUrl).should.eventually.be.not.empty;
     });
   });
-
 });

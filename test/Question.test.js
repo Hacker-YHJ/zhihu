@@ -1,23 +1,15 @@
-'use strict';
+const { Question } = require('../');
+const chai = require('chai');
 
-let should = require('should');
-let Question = require('../').Question;
+chai.should();
+chai.use(require('chai-as-promised'));
 
-describe('Question', function () {
-  it('should return question object by settings', function () {
-    return Question.answers({
-      token: '19557271',
-      offset: 0,
-      // pagesize: 5
-    }).then(function (data) {
-      Object.keys(data).length.should.above(0);
-    });
-  });
+describe('Question', () => {
+  it('should return question object by settings', () => Question.answers({
+    token: '19557271',
+    offset: 0,
+    // pagesize: 5
+  }).should.eventually.be.not.empty);
 
-  it('should return question object, from 0 - 9 by default', function () {
-    return Question.answers('19557271')
-      .then(function (data) {
-        Object.keys(data).length.should.above(0);
-      })
-  })
+  it('should return question object, from 0 - 9 by default', () => Question.answers('19557271').should.eventually.be.not.empty);
 });

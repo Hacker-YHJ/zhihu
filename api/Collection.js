@@ -1,38 +1,30 @@
-/**
- * Copyright (c) 2015 Meizu bigertech, All rights reserved.
- * http://www.bigertech.com/
- * @author liuxing
- * @date  15/10/14
- * @description
- *
- */
-'use strict';
-
-const {cheerio, request, Promise, util: url} = require('../config/commonModules');
+const {
+  cheerio, request, Promise, url,
+} = require('../config/commonModules');
 
 const config = require('../config');
 const API = require('../config/api');
 
 function getItems(body) {
-  let $ = cheerio.load(body);
-  let allZMItem = $('.zm-item');
-  let items = [];
-  allZMItem.each(function (index, element) {
-    let h2 = $(element).find('h2.zm-item-title a');
-    let href = h2.attr('href') || '';
-    let content = $(element).find('div.zm-item-fav div');
-    let user = content.find('.answer-head .zm-item-answer-author-wrap');
-    let answerID = parseInt($(element).find('.zm-item-fav .zm-item-answer ').attr('data-aid'));
-    let atoken = parseInt($(element).find('.zm-item-fav .zm-item-answer ').attr('data-atoken'));
-    let html = $(element).find('textarea.content').html();
-    let item = {
+  const $ = cheerio.load(body);
+  const allZMItem = $('.zm-item');
+  const items = [];
+  allZMItem.each((index, element) => {
+    const h2 = $(element).find('h2.zm-item-title a');
+    const href = h2.attr('href') || '';
+    const content = $(element).find('div.zm-item-fav div');
+    const user = content.find('.answer-head .zm-item-answer-author-wrap');
+    const answerID = parseInt($(element).find('.zm-item-fav .zm-item-answer ').attr('data-aid'), 10);
+    const atoken = parseInt($(element).find('.zm-item-fav .zm-item-answer ').attr('data-atoken'), 10);
+    const html = $(element).find('textarea.content').html();
+    const item = {
       aid: answerID,
-      voter: parseInt($(element).find('.zm-item-vote a.zm-item-vote-count').text()),
+      voter: parseInt($(element).find('.zm-item-vote a.zm-item-vote-count').text(), 10),
       desc: content.find('div.zh-summary.summary').text(),
       content: html,
-      atoken: atoken,
+      atoken,
       question: {
-        id: parseInt(href.match(/\d*?$/)[0]),
+        id: parseInt(href.match(/\d*?$/)[0], 10),
         title: h2.text(),
         url: config.zhihu + h2.attr('href'),
       },
@@ -53,18 +45,16 @@ function getItems(body) {
  * @param url
  * @returns {*}
  */
-function getDataByPage(url) {
+function getDataByPage(pageUrl) {
   if (url.indexOf(API.collection.url) < 0) {
     throw new Error('Url not match!');
   }
 
-  let options = {
-    url,
-    headers: config.headers
+  const options = {
+    url: pageUrl,
+    headers: config.headers,
   };
-  return request(options).then(function (body) {
-    return getItems(body.body);
-  });
+  return request(options).then(body => getItems(body.body));
 }
 
 /**
@@ -72,18 +62,18 @@ function getDataByPage(url) {
  * @param url
  * @returns {*}
  */
-function getPagination(url) {
-  let options = {
-    url,
-    headers: config.headers
+function getPagination(pageUrl) {
+  const options = {
+    url: pageUrl,
+    headers: config.headers,
   };
-  return request(options).then(function (body) {
-    let $ = cheerio.load(body.body);
-    let pages = $('.zm-invite-pager span').eq(-2).text();
-    let currentPage = $('.zm-invite-pager span.zg-gray-normal').eq(-1).text();
+  return request(options).then((body) => {
+    const $ = cheerio.load(body.body);
+    const pages = $('.zm-invite-pager span').eq(-2).text();
+    const currentPage = $('.zm-invite-pager span.zg-gray-normal').eq(-1).text();
     return {
-      pages: parseInt(pages),
-      current: parseInt(currentPage),
+      pages: parseInt(pages, 10),
+      current: parseInt(currentPage, 10),
     };
   });
 }
@@ -94,45 +84,35 @@ function getPagination(url) {
  * @param url
  * @returns {*}
  */
-function getAllPageData(url) {
-  let formatUrl = util.parse(url);
-  let realUrl = config.zhihu + formatUrl.pathname;
+function getAllPageData(pageUrl) {
+  const formatUrl = url.parse(pageUrl);
+  const realUrl = config.zhihu + formatUrl.pathname;
   let allItems = [];
-  return getPagination(url).then(function (paginations) {
-    let pages = [];
-    for (let i = 1; i <= paginations.pages; i++) {
-      pages.push(i);
-    }
-
-    //并发
-    return Promise.map(pages, function (page) {
-      let pageUrl = realUrl + '?page=' + page;
-      return getDataByPage(pageUrl).then(function (items) {
+  return getPagination(url).then(paginations => (
+    Promise.map(Array(...paginations.pages), (_, page) => {
+      const singlePageUrl = `${realUrl}?page=${page + 1}`;
+      return getDataByPage(singlePageUrl).then((items) => {
         allItems = allItems.concat(items);
       });
-    }, {concurrency: 5}).then(function (total) {
-      return total;
-    });
-  }).then(function () {
-    return allItems;
-  });
+    }, { concurrency: 5 }).then(total => total)
+  )).then(() => allItems);
 }
 
-function getCollectionInfo(url) {
-  if (url.indexOf(API.collection.url) < 0) {
+function getCollectionInfo(pageUrl) {
+  if (pageUrl.indexOf(API.collection.url) < 0) {
     throw new Error('Url not match!');
   }
 
-  let cid = parseInt(url.match(/\d+/)[0]);
-  let options = {
-    url,
-    headers: config.headers
+  const cid = parseInt(pageUrl.match(/\d+/)[0], 10);
+  const options = {
+    pageUrl,
+    headers: config.headers,
   };
-  return request(options).then(function (body) {
-    let $ = cheerio.load(body[1]);
-    let title = $('#zh-fav-head-title').text();
-    let $user = $('#zh-single-answer-author-info .zm-list-content-title a');
-    let user = {
+  return request(options).then((body) => {
+    const $ = cheerio.load(body[1]);
+    const title = $('#zh-fav-head-title').text();
+    const $user = $('#zh-single-answer-author-info .zm-list-content-title a');
+    const user = {
       img: $('a.zm-list-avatar-link .zm-list-avatar-medium').attr('src'),
       name: $user.text(),
       url: $user.attr('href'),
@@ -140,7 +120,7 @@ function getCollectionInfo(url) {
     return {
       cid,
       title,
-      user
+      user,
     };
   });
 }
@@ -149,5 +129,5 @@ module.exports = {
   getAllPageData,
   getDataByPage,
   getPagination,
-  getCollectionInfo
+  getCollectionInfo,
 };

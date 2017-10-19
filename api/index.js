@@ -1,17 +1,9 @@
-/**
- * Copyright (c) 2014 Meizu bigertech, All rights reserved.
- * http://www.bigertech.com/
- * @author liuxing
- * @date  14-11-11
- * @description
- *
- */
-let zhuanlan = require('./Post');
-let User = require('./User');
-let Collection = require('./Collection');
-let Topic = require('./Topic');
-let Answer = require('./Answer');
-let Question = require('./Question');
+const zhuanlan = require('./Post');
+const User = require('./User');
+const Collection = require('./Collection');
+const Topic = require('./Topic');
+const Answer = require('./Answer');
+const Question = require('./Question');
 
 module.exports = {
   Post: zhuanlan,
@@ -19,5 +11,5 @@ module.exports = {
   Topic,
   Collection,
   Answer,
-  Question
+  Question,
 };

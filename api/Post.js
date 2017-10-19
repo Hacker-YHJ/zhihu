@@ -1,45 +1,36 @@
-/**
- * Copyright (c) 2014 Meizu bigertech, All rights reserved.
- * http://www.bigertech.com/
- * @author liuxing
- * @date  14-11-10
- * @description
- *
- */
-'use strict';
-
-const {Promise, request, url, _, QUERY} = require('../config/commonModules');
+const {
+  Promise, request, url, _, QUERY,
+} = require('../config/commonModules');
 
 const API = require('../config/api');
 const User = require('./User');
 
 
 function getRealUrl(apiUrl, postUrl) {
-  let pathname = url.parse(postUrl).pathname;
-  let paths = pathname.split('\/');
+  const { pathname } = url.parse(postUrl);
+  const paths = pathname.split('/');
   if (paths.length < 0) {
     throw new Error('Url error!');
   }
 
-  let data = {
+  const data = {
     name: paths[1],
     postID: paths[2],
   };
   return _.template(apiUrl)(data);
 }
 
-let getLikers = (postUrl, config) => {
-  let url = getRealUrl(API.post.likers, postUrl);
-  let query = config || QUERY.zhuanlan.likers;
-  let data = {
-    url,
+const getLikers = (postUrl, config) => {
+  const query = config || QUERY.zhuanlan.likers;
+  const data = {
+    url: getRealUrl(API.post.likers, postUrl),
     qs: {
       limit: query.limit,
-      offset: query.offset
-    }
+      offset: query.offset,
+    },
   };
-  return request(data).then(function (content) {
-    let users = content.body;
+  return request(data).then((content) => {
+    const users = content.body;
     return JSON.parse(users);
   });
 };
@@ -47,80 +38,57 @@ let getLikers = (postUrl, config) => {
  * get full userinfo who stared post
  * @param postUrl post's url
  * @param config
- * @returns {*}  User Object  contain detail userinfo , number of question, number of answer etc
+ * @returns {*}  User Object contain detail userinfo , number of question, number of answer etc
  */
-let likersDetail = (postUrl, config) => {
-  return getLikers(postUrl, config).then(function (users) {
-    if (users.length > 0) {
-      //并发
-      return Promise.map(users, function (user) {
-        //User.getUserByName参数是用户的slug值，不是直接的用户名
-        return User.getUserByName(user.slug).then(function (result) {
-          return result;
-        });
-      }, {
-        concurrency: 30,
-      }).then(function (data) {
-        //按follower数目逆序排列
-        let pure_users = _.sortBy(data, 'follower').reverse();
-        return pure_users;
-      });
-    }
-  });
-};
+const likersDetail = (postUrl, config) => getLikers(postUrl, config).then(users => (
+  Promise.map(users, user =>
+    // User.getUserByName参数是用户的slug值，不是直接的用户名
+    User.getUserByName(user.slug).then(result => result), {
+    concurrency: 30,
+  }).then(data => _.sortBy(data, 'follower').reverse())
+));
 
-let articleInfo = (postUrl) => {
-  let url = getRealUrl(API.post.info, postUrl);
-  let options = {
-    url,
+const articleInfo = (postUrl) => {
+  const options = {
+    url: getRealUrl(API.post.info, postUrl),
     gzip: true,
   };
 
-  return request(options).then((content) => {
-    return JSON.parse(content.body);
-  });
+  return request(options).then(content => JSON.parse(content.body));
 };
 
-let articleList = (name, config) => {
-  let query = config || QUERY.zhuanlan.articleList;
-  let data = {
-    url: _.template(API.post.page)({name}),
+const articleList = (name, config) => {
+  const query = config || QUERY.zhuanlan.articleList;
+  const data = {
+    url: _.template(API.post.page)({ name }),
     qs: {
       limit: query.limit,
-      offset: query.offset
-    }
+      offset: query.offset,
+    },
   };
-  return request(data).then((content) => {
-    return JSON.parse(content.body);
-  });
+  return request(data).then(content => JSON.parse(content.body));
 };
 
-let zhuanlanInfo = (zhuanlanName) => {
-  let url = API.post.zhuanlan + zhuanlanName;
-  let options = {
-    url,
+const zhuanlanInfo = (zhuanlanName) => {
+  const options = {
+    url: API.post.zhuanlan + zhuanlanName,
     gzip: true,
   };
-  return request(options).then((content) => {
-    return JSON.parse(content.body);
-  });
+  return request(options).then(content => JSON.parse(content.body));
 };
 
 
-let comments = (postUrl, config) => {
-  let url = getRealUrl(API.post.comments, postUrl);
-  let query = config || QUERY.zhuanlan.comments;
+const comments = (postUrl, config) => {
+  const query = config || QUERY.zhuanlan.comments;
 
-  let options = {
-    url,
+  const options = {
+    url: getRealUrl(API.post.comments, postUrl),
     qs: {
       limit: query.limit,
-      offset: query.offset
-    }
+      offset: query.offset,
+    },
   };
-  return request(options).then((content) => {
-    return JSON.parse(content.body);
-  })
+  return request(options).then(content => JSON.parse(content.body));
 };
 
 
@@ -129,5 +97,5 @@ module.exports = {
   comments,
   info: articleInfo,
   page: articleList,
-  zhuanlanInfo
+  zhuanlanInfo,
 };

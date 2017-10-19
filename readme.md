@@ -1,8 +1,6 @@
 # 知乎数据 API 接口 (node.js)
 
-> 知乎已经更新为 https, 本项目 \< 1.0.0 不能再使用了. 请升级
-
-[![](https://nodei.co/npm/zhihu.png?downloads=true)](https://nodei.co/npm/zhihu/)
+[![](https://nodei.co/npm/zhihu.png?downloads=true)](https://nodei.co/npm/zhihu-plus/)
 
 [![](https://travis-ci.org/iplus26/zhihu.svg)](https://travis-ci.org/iplus26/zhihu/builds)
 
@@ -194,10 +192,10 @@ zhihu.Post.comments(`https://zhuanlan.zhihu.com/p/24241616?refer=chenyuz`).then(
   console.log(comments);
 });
 ```
-**Result**  
+**Result**
 评论数组
 ```
-[ 
+[
   { liked: false,
     inReplyToCommentId: 0,
     featured: false,
@@ -220,7 +218,7 @@ zhihu.Post.comments(`https://zhuanlan.zhihu.com/p/24241616?refer=chenyuz`).then(
     content: 'ins即视感',
     createdTime: '2016-12-07T21:56:25+08:00',
     collapsed: false,
-    likesCount: 1 
+    likesCount: 1
    },
     ...
     ...

@@ -14,5 +14,5 @@ module.exports = {
   Promise,
   request,
   _,
-  QUERY
+  QUERY,
 };
