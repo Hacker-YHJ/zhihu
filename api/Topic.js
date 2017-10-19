@@ -19,12 +19,12 @@ const getTopicByID = (topicID, page = 1) => {
 
     const questions = {};
 
-    $('div.feed-item.feed-item-hook.question-item').each((i) => {
+    $('div.feed-item.feed-item-hook.question-item').each((i, elem) => {
       questions[i] = {};
-      questions[i].title = $('a.question_link', this).text();
+      questions[i].title = $('a.question_link', elem).text();
       questions[i].url = API.zhihu +
-        $('a.question_link', this).attr('href');
-      questions[i].postTime = $('span.time', this).text();
+        $('a.question_link', elem).attr('href');
+      questions[i].postTime = $('span.time', elem).text();
     });
 
     result.page = page;
@@ -50,17 +50,17 @@ const getTopicTopAnswersByID = (topicID, page = 1) => {
 
     const questions = {};
 
-    $('div.feed-item.feed-item-hook.folding').each((i) => {
+    $('div.feed-item.feed-item-hook.folding').each((i, elem) => {
       questions[i] = {};
-      questions[i].title = $('a.question_link', this).text();
-      questions[i].url = API.zhihu + $('a.question_link', this).attr('href');
-      questions[i].upvotes = $('a.zm-item-vote-count', this).text();
-      [questions[i].comment_count] = $('a.toggle-comment', this).last().text().match(/\d+/g);
-      questions[i].answer_url = API.zhihu + $('a.toggle-expand', this).attr('href');
+      questions[i].title = $('a.question_link', elem).text();
+      questions[i].url = API.zhihu + $('a.question_link', elem).attr('href');
+      questions[i].upvotes = $('a.zm-item-vote-count', elem).text();
+      [questions[i].comment_count] = $('a.toggle-comment', elem).last().text().match(/\d+/g);
+      questions[i].answer_url = API.zhihu + $('a.toggle-expand', elem).attr('href');
       questions[i].user = {};
-      questions[i].user.name = $('h3.zm-item-answer-author-wrap a', this).text();
+      questions[i].user.name = $('h3.zm-item-answer-author-wrap a', elem).text();
       questions[i].user.url = API.zhihu
-        + $('h3.zm-item-answer-author-wrap a', this).attr('href');
+        + $('h3.zm-item-answer-author-wrap a', elem).attr('href');
     });
 
     result.page = page;
